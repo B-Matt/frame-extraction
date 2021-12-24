@@ -6,7 +6,6 @@ def callback_media_open(opaque, data_pointer, size_pointer):
     stream_provider = ctypes.cast(opaque, ctypes.POINTER(ctypes.py_object)).contents.value
     stream_provider.open()
 
-    print('aaaa')
     data_pointer.contents.value = opaque
     size_pointer.value = 1 ** 64 - 1
     return 0
