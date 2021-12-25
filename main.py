@@ -4,40 +4,46 @@ import time
 import math
 
 from modules.stream_provider import *
+from modules.frame_capture import *
 
-def mspf(mp):
-    """Milliseconds per frame"""
-    return int(1000 // (mp.get_fps() or 25))
-
-instance = vlc.Instance()
-provider = StreamProvider('videos', 'mp4', instance)
-
+instance = vlc.Instance('')
 player = instance.media_player_new()
-  
+provider = StreamProvider('videos', 'mp4', instance, 'screenshots')
 player.set_media(provider.open())
+
+capturer = FrameCapture(player)
 player.play()
 
 while True:
-    try:
-        if keyboard.is_pressed('q'):
-            #print(player.get_position())
-            time.sleep(0.08)
-            player.pause()
-            time.sleep(0.08)
+    if keyboard.is_pressed('q'):
+        time.sleep(0.08)
+        player.pause()
+        time.sleep(0.08)
 
-            current_frame = player.get_time() / mspf(player)
-            for i in range(math.ceil(player.get_fps())):
-                print(i, math.ceil((current_frame - i) * mspf(player)))
-                player.set_time(math.ceil((current_frame - i) * mspf(player)))
-                time.sleep(0.25)
-                player.video_take_snapshot(0, 'screenshots', 1920, 1080)
+        current_frame = player.get_time() / capturer.mspf()
+        frame_count = math.ceil(player.get_fps())
+        for i in range(frame_count * 2):
+            capturer.frame_backward()
+            time.sleep(0.5)
+            player.video_take_snapshot(0, f'screenshots/{provider.get_name()}/backward', 1920, 1080)
+            time.sleep(0.2)
 
-            #player.set_time(13401)
-            #player.set_position(0.013967541977763176)
-            time.sleep(0.1)
-            #player.video_take_snapshot(0, 'screenshots', 0, 0)
-            break
-    except:
+        player.set_time(math.ceil(current_frame * capturer.mspf()))
+        time.sleep(0.3)
+
+        for i in range(frame_count * 2):
+            capturer.frame_forward()
+            time.sleep(0.5)
+            player.video_take_snapshot(0, f'screenshots/{provider.get_name()}/forward', 1920, 1080)
+            time.sleep(0.2)
+
+        player.set_time(math.ceil(current_frame * capturer.mspf()))
+
+        time.sleep(0.3)
+        player.play()
+        continue
+
+    if keyboard.is_pressed('enter'):
         break
 
 player.stop()
