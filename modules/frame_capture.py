@@ -12,3 +12,9 @@ class FrameCapture(object):
 
     def frame_backward(self):
         self._player.set_time(self._player.get_time() - self.mspf())
+
+    def sec_forward(self, secs=1):
+        self._player.set_time(self._player.get_time() + secs * 1000)
+
+    def sec_backward(self, secs=1):
+        self._player.set_time(self._player.get_time() - secs * 1000)

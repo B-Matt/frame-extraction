@@ -5,8 +5,9 @@ import math
 
 from modules.stream_provider import *
 from modules.frame_capture import *
+from modules.compressor import *
 
-instance = vlc.Instance('')
+instance = vlc.Instance('--rate=5.0')
 player = instance.media_player_new()
 provider = StreamProvider('videos', 'mp4', instance, 'screenshots')
 player.set_media(provider.open())
@@ -43,7 +44,14 @@ while True:
         player.play()
         continue
 
+    if keyboard.is_pressed('right'):
+        capturer.sec_forward(1)
+
+    if keyboard.is_pressed('left'):
+        capturer.sec_backward(1)
+
     if keyboard.is_pressed('enter'):
         break
 
 player.stop()
+compressor = Compressor('screenshots', 100, 6)
