@@ -1,0 +1,7 @@
+colorama==0.4.4
+keyboard==0.13.5
+numpy==1.22.0
+opencv-python==4.5.5.62
+Pillow==8.4.0
+python-vlc==3.0.12118
+tqdm==4.62.3
