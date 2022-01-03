@@ -1,6 +1,8 @@
-import vlc
 
-class FrameCapture(object):
+class VLCPlayerUtils(object):
+    """
+        Class used for changing VLC Player frames and seconds forward or backwards.
+    """
     def __init__(self, player) -> None:
         self._player = player
 
