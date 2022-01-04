@@ -6,7 +6,6 @@ from multiprocessing import cpu_count
 
 from .utils import list_files, chunk
 
-
 class DuplicatesRemover(object):
     def __init__(self, data_path):
         self._data_path = data_path        
@@ -29,17 +28,22 @@ class DuplicatesRemover(object):
         search_params = dict(checks=100)   # or pass empty dictionary
         detector = cv2.ORB_create(nfeatures=10000, scoreType=cv2.ORB_FAST_SCORE)
         flann = cv2.FlannBasedMatcher(index_params, search_params)
-        print('\n\n[SEARCHING FOR DUPLICATES]:')
         for (i, image) in enumerate(data):
+            if not os.path.exists(image):
+                continue
             first_img = cv2.imread(image, 0)
             kp1, des1 = detector.detectAndCompute(first_img, None)
 
-            for next_image in self._all_images[i+1:]:
+            for next_image in data[i+1:]:
                 if not os.path.exists(next_image):
                     continue
 
                 second_img = cv2.imread(next_image, 0)
                 kp2, des2 = detector.detectAndCompute(second_img, None)
+
+                if (des1 is None or len(des1) < 2 or des2 is None or len(des2) < 2):
+                    continue
+
                 matches = flann.knnMatch(des1, des2, k=2)
                 good_matches = 0
 
@@ -48,5 +52,5 @@ class DuplicatesRemover(object):
                         if t[0].distance < 0.75 * t[1].distance:
                             good_matches += 1
 
-                if good_matches > 850:
+                if good_matches > 900:
                     os.remove(next_image)

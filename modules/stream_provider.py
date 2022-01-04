@@ -1,8 +1,16 @@
 import os
 import shutil
+from enum import Enum
+
+class PlayerState(Enum):
+    PLAYING = 1
+    STOPPED = 2
+    PAUSED = 3
 
 class StreamProvider(object):
-    def __init__(self, path, ext, vlc_instance, screens_path) -> None:
+    def __init__(self, path, ext, vlc_instance, player, screens_path) -> None:
+        self.current_state = PlayerState.STOPPED
+
         self._media_files = []
         self._files_names = []
 
@@ -10,6 +18,7 @@ class StreamProvider(object):
         self._file_ext = ext
         self._index = 0
         self._instance = vlc_instance
+        self._player = player
         self._screens_path = screens_path
         self.setup()
 
@@ -38,6 +47,19 @@ class StreamProvider(object):
         # Increament Index
         self._index = self._index + 1
         return data
+
+    def play(self):
+        if self.current_state == PlayerState.STOPPED:
+            self._player.play()
+            self.current_state = PlayerState.PLAYING
+
+    def pause(self):
+        if self.current_state == PlayerState.PAUSED:
+            self._player.play()
+            self.current_state = PlayerState.PLAYING
+        elif self.current_state == PlayerState.PLAYING:
+            self._player.pause()
+            self.current_state = PlayerState.PAUSED
 
     def get_name(self):
         return self._files_names[self._index - 1]
