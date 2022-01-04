@@ -32,11 +32,8 @@ class StreamProvider(object):
         # Create New Directory In Screenshots
         path = os.path.join(self._screens_path, self._files_names[self._index])
         if os.path.isdir(path):
-            shutil.rmtree(path, ignore_errors=True)
-        
+            shutil.rmtree(path, ignore_errors=True)        
         os.mkdir(path)  # Video Directory
-        os.mkdir(f'{path}/backward')  # Backward Screens Directory
-        os.mkdir(f'{path}/forward')  # Forward Screens Directory
 
         # Increament Index
         self._index = self._index + 1
