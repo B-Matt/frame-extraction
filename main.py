@@ -18,7 +18,7 @@ if __name__ == '__main__':
     sorter = FileSorter('data', 'screenshots')
     duplicate_remover = DuplicatesRemover('screenshots')
 
-    player = instance.media_player_new()
+    """player = instance.media_player_new()
     provider = StreamProvider('videos', 'mkv', instance, player, 'screenshots')
     player.set_media(provider.open())
 
@@ -72,11 +72,11 @@ if __name__ == '__main__':
             break
 
     player.stop()
-    time.sleep(1)
+    time.sleep(1)"""
 
     # Remove Duplicated Images
     pool = Pool(processes=duplicate_remover._process_num)
-    for _ in tqdm.tqdm(pool.imap_unordered(duplicate_remover.detect_same_images, duplicate_remover._chunked_paths), total=len(duplicate_remover._chunked_paths)):
+    for _ in tqdm(pool.imap_unordered(duplicate_remover.detect_same_images, duplicate_remover._chunked_paths), total=len(duplicate_remover._chunked_paths)):
         pass
 
     pool.close()
@@ -84,5 +84,5 @@ if __name__ == '__main__':
     time.sleep(1)
  
     # Sort & Compress Images To WebP Format
-    sorter.move_files()
+    #sorter.move_files()
     #compressor = Compressor('screenshots', 100, 6)
